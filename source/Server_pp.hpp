@@ -4,11 +4,13 @@
 #include "./websocketpp/config/asio_no_tls.hpp"
 #include "./websocketpp/server.hpp"
 #include <vector>
+#include <fstream>
+#include <sstream>
+#include <iostream>
 #include <boost/thread.hpp>
 #include <boost/thread/mutex.hpp>
 #include <boost/format.hpp>
-#include <fstream>
-#include <sstream>
+#include <boost/chrono.hpp>
 
 namespace ozo {
 
@@ -17,6 +19,7 @@ public:
 	//external input interfaces
 	float *distortionK;
 	float *chromaAbParameter;
+	bool *inputReady;
 	
 	//external output interfaces
 	bool outputReady;

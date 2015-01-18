@@ -63,5 +63,7 @@ endif (OpenCV_FOUND)
 
 # add the executable
 add_executable(Server_pp_test Server_pp_test.cpp)
+add_executable(SourceCamera_test SourceCamera_test.cpp)
 
 target_link_libraries( Server_pp_test ${LIBS} )
+target_link_libraries( SourceCamera_test ${LIBS} )

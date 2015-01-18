@@ -54,7 +54,7 @@ void EvaluateLine::process() {
 	}
 	
 	std::ofstream myfile;
-	myfile.open ("mesh.txt", std::fstream::out | std::fstream::trunc);
+	myfile.open ("result.txt", std::fstream::out | std::fstream::trunc);
 	myfile << tempString.str();
 	myfile.close();
 

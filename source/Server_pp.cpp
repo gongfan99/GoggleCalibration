@@ -1,5 +1,4 @@
 #include "Server_pp.hpp"
-#include <iostream>
 
 using websocketpp::connection_hdl;
 using websocketpp::lib::placeholders::_1;
@@ -18,6 +17,7 @@ Server_pp::Server_pp() : mSocketConnected(false), outputReady(false) {
 	server.init_asio();
 	server.listen(9002);
 	server.start_accept();
+	std::cout << "Listening to localhost:9002\n";
 }
 
 Server_pp::~Server_pp() {
@@ -25,11 +25,15 @@ Server_pp::~Server_pp() {
 }
 
 void Server_pp::process() {
-    if( mSocketConnected && !outputReady ) {
+    if( mSocketConnected && *inputReady ) {
 		std::ostringstream tempString;
-		tempString << "{distortionK: [" << distortionK[1] << "," << distortionK[2] << "," << distortionK[3] << "," << distortionK[4] << "],";
-		tempString << "chromaAbParameter: [" << chromaAbParameter[1] << "," << chromaAbParameter[2] << "," << chromaAbParameter[3] << "," << chromaAbParameter[4] << "]}";
+		//"distortionK" is obfuscated to  "_e"; "chromaAbParameter" is obfuscated to  "_f"
+		tempString << "{\"_e\": [" << distortionK[0] << "," << distortionK[1] << "," << distortionK[2] << "," << distortionK[3] << "], ";
+		tempString << "\"_f\": [" << chromaAbParameter[0] << "," << chromaAbParameter[1] << "," << chromaAbParameter[2] << "," << chromaAbParameter[3] << "]}";
+		//std::cout << tempString.str() << std::endl;
 		server.send(mHandle, tempString.str(), websocketpp::frame::opcode::TEXT);
+		*inputReady = false;
+		outputReady = false;	
 	}
 	server.poll();
 }
@@ -38,10 +42,11 @@ void Server_pp::on_open(websocketpp::connection_hdl hdl) {
 	mHandle = hdl;
 	std::cout << server.get_con_from_hdl(mHandle)->get_host() << std::endl;
     // Only accept connections from another mobile phone
-    if( server.get_con_from_hdl(mHandle)->get_host() == "localhost"){
+/*     if( server.get_con_from_hdl(mHandle)->get_host() == "localhost"){
         server.close(hdl, websocketpp::close::status::normal, "Connection closed.");
 		return;
-    }
+    } */
+	boost::this_thread::sleep_for(boost::chrono::milliseconds(1000)); //wait for web side to initialize
     mSocketConnected = true;
     std::cout << "Connected.\n";
 }
@@ -59,6 +64,7 @@ void Server_pp::on_fail(websocketpp::connection_hdl hdl) {
 void Server_pp::on_message(websocketpp::connection_hdl hdl, 
 							websocketpp::server<websocketpp::config::asio>::message_ptr msg) {
     if( (msg->get_payload()) == "image ready"){
+		std::cout << "Image ready received.\n";
 		outputReady = true;
     }
 }

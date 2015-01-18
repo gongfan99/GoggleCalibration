@@ -1,6 +1,7 @@
 #ifndef __OZO_SOURCECAMERA_HPP__
 #define __OZO_SOURCECAMERA_HPP__
 
+#include <iostream>
 #include <cv.h>
 #include <highgui.h>
 

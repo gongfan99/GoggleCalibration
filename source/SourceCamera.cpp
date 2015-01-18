@@ -1,6 +1,5 @@
 #include "SourceCamera.hpp"
 #include "OzoConfigure.hpp"
-#include <iostream>
 
 namespace ozo {
 

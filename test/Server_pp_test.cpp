@@ -24,6 +24,7 @@ int main()
 	EvaluateLine evaluateLine;
 
 	//connect components
+	server.inputReady = &startServer;
 	server.distortionK = distortionK;
 	server.chromaAbParameter = chromaAbParameter;
 	evaluateLine.data = &(camera.data);
@@ -31,9 +32,11 @@ int main()
 	//main loop
 	while(1){
 		server.process();
+		boost::this_thread::sleep_for(boost::chrono::milliseconds(20)); //wait for the image to be stable before captured by camera
 		if (server.outputReady) {
 			camera.process();
 			evaluateLine.process();
+			startServer = true;
 			caseNum++;
 			if (caseNum == 1) {
 				break;

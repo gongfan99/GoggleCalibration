@@ -8,7 +8,7 @@ using websocketpp::lib::bind;
 
 namespace ozo {
 
-Server_pp::Server_pp() : mSocketConnected(false) {
+Server_pp::Server_pp() : mSocketConnected(false), outputReady(false) {
 	server.set_open_handler(bind(&Server_pp::on_open,this,::_1));
 	server.set_fail_handler(bind(&Server_pp::on_fail,this,::_1));
 	server.set_close_handler(bind(&Server_pp::on_close,this,::_1));
@@ -25,17 +25,11 @@ Server_pp::~Server_pp() {
 }
 
 void Server_pp::process() {
-    if( mSocketConnected ) {
-		{
-			boost::unique_lock<boost::mutex> lock1(*requestSendMutex, boost::try_to_lock);
-			if (lock1.owns_lock() && requestSend) {
-				std::ostringstream tempString;
-				tempString << "{distortionK: [" << distortionK[1] << "," << distortionK[2] << "," << distortionK[3] << "," << distortionK[4] << "],";
-				tempString << "chromaAbParameter: [" << chromaAbParameter[1] << "," << chromaAbParameter[2] << "," << chromaAbParameter[3] << "," << chromaAbParameter[4] << "]}";
-				server.send(mHandle, tempString.str(), websocketpp::frame::opcode::TEXT);
-				requestSend = false;
-			};
-		}
+    if( mSocketConnected && !outputReady ) {
+		std::ostringstream tempString;
+		tempString << "{distortionK: [" << distortionK[1] << "," << distortionK[2] << "," << distortionK[3] << "," << distortionK[4] << "],";
+		tempString << "chromaAbParameter: [" << chromaAbParameter[1] << "," << chromaAbParameter[2] << "," << chromaAbParameter[3] << "," << chromaAbParameter[4] << "]}";
+		server.send(mHandle, tempString.str(), websocketpp::frame::opcode::TEXT);
 	}
 	server.poll();
 }
@@ -65,8 +59,7 @@ void Server_pp::on_fail(websocketpp::connection_hdl hdl) {
 void Server_pp::on_message(websocketpp::connection_hdl hdl, 
 							websocketpp::server<websocketpp::config::asio>::message_ptr msg) {
     if( (msg->get_payload()) == "image ready"){
-		boost::lock_guard<boost::mutex> lock1(*imageReadyMutex);
-		imageReady = true;
+		outputReady = true;
     }
 }
 

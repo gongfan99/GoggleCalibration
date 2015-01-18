@@ -8,7 +8,11 @@ namespace ozo {
 
 class SourceCamera {
 public:
-	cv::Mat data; //the external output interface
+	//the external input interface
+	
+	//the external output interface
+	cv::Mat data;
+
 	SourceCamera();
 	~SourceCamera();
 	void process();

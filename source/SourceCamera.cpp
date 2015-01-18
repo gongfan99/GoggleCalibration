@@ -19,9 +19,8 @@ SourceCamera::~SourceCamera() {}
 void SourceCamera::process() {
 	//make sure the system can find "opencv_ffmpeg249.dll" !!!
 	do {
-		cap >> frame;
-	} while (frame.empty()); //first frame from camera is often NULL
-	data = frame;
+		cap >> data;
+	} while (data.empty()); //first frame from camera is often NULL
 }
 
 } //namespace ozo

@@ -3,12 +3,10 @@
 
 #include "./websocketpp/config/asio_no_tls.hpp"
 #include "./websocketpp/server.hpp"
-#include "OVR_CAPI.h"
 #include <vector>
 #include <boost/thread.hpp>
 #include <boost/thread/mutex.hpp>
 #include <boost/format.hpp>
-#include "utils.hpp"
 #include <fstream>
 #include <sstream>
 
@@ -17,14 +15,11 @@ namespace ozo {
 class Server_pp {
 public:
 	//external input interfaces
-	float* distortionK;
-	float* chromaAbParameter;
+	float *distortionK;
+	float *chromaAbParameter;
 	
-	//external status interfaces
-	boost::mutex *imageReadyMutex; //mutex for image ready on phone
-	bool *imageReady;
-	boost::mutex *requestSendMutex; //mutex for request server to send distortion parameter
-	bool *requestSend;
+	//external output interfaces
+	bool outputReady;
 
 	Server_pp();
 	~Server_pp();

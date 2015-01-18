@@ -13,7 +13,7 @@ SET( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} ${GCC_COVERAGE_COMPILE_FLAGS}" )
 SET( CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} ${GCC_COVERAGE_LINK_FLAGS}" )
 
 #set the project source path
-SET(PROJ_SRC "C:/Users/Sam/Documents/User/Embeded/ServerApp/webserver/source")
+SET(PROJ_SRC "C:/Users/Sam/Documents/User/Embeded/ServerApp/GoggleCalibration/source")
 
 #set the library path
 SET(ALL_LIBS MINGWW64 BOOST ZXING OVR WEBSOCKETPP)

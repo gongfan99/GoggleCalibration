@@ -4,74 +4,45 @@
 #include <boost/thread/mutex.hpp>
 #include <boost/chrono.hpp>
 #include "SourceCamera.hpp"
-#include "DecoderQR.hpp"
-#include "OculusDK2.hpp"
 #include "Server_pp.hpp"
-#include "utils.hpp"
+#include "EvaluateLine.hpp"
 #include "OzoConfigure.hpp"
 
 using namespace ozo;
 
-boost::mutex mutexDone;
-bool done = false;
-	
-void threadQRdecoder(SourceCamera *camera, DecoderQR *decoder) { //DecoderQR has mutex member; only pointer is allowed here
-	//always avoid put "break" statement inside boost::lock_guard<boost::mutex> scope
-	bool done2 = false;
-	while(1){ //event loop
-		try	{
-			camera->process();
-			decoder->process();
-		} catch (zxing::Exception& e) {
-			//if decoder fails to process, it will not cause other issue so can be ignored.
-			std::cerr << "Error: " << e.what() << ";   " ;
-		}
-		std::cout << "The QR code is: " << decoder->data << std::endl;
-		{
-			boost::lock_guard<boost::mutex> lock2(mutexDone);
-			done2 = done;
-		}
-		if (done2) break;
-		boost::this_thread::sleep_for(boost::chrono::milliseconds(2000));
-	}
-}
-
 int main()
 {
 	char key;
+	bool startServer = true;
+	int caseNum = 0;
+	float distortionK[4] = {1.0, 0.22, 0.24, 0.0};
+	float chromaAbParameter[4] = {0.996, -0.004, 1.014, 0.0};
 
 	//create components
-	SourceCamera camera;
-	DecoderQR decoder;
-	OculusDK2 oculus;
 	Server_pp server;
+	SourceCamera camera;
+	EvaluateLine evaluateLine;
 
 	//connect components
-	decoder.source = &(camera.data);
-	server.mutex = &(decoder.mutex);
-	server.decoder_data = &(decoder.data);
-	server.OcuInf = &(oculus.OcuInf);
+	server.distortionK = distortionK;
+	server.chromaAbParameter = chromaAbParameter;
+	evaluateLine.data = &(camera.data);
 
-	//create another thread to run the QR decoding
-	boost::thread t1(threadQRdecoder, &camera, &decoder);
-
-	//main event loop
+	//main loop
 	while(1){
-		oculus.process();
 		server.process();
-		if (_kbhit()) {
-			key = _getch();
-			std::cout << key;
+		if (server.outputReady) {
+			camera.process();
+			evaluateLine.process();
+			caseNum++;
+			if (caseNum == 1) {
+				break;
+			} else {
+				distortionK[1] += 0.1;
+				distortionK[2] += 0.1;
+			}
 		}
-		if (key == 27){
-			boost::lock_guard<boost::mutex> lock1(mutexDone);
-			done = true;
-		}
-		if (done) break;      //If you hit ESC key loop will break.
-		boost::this_thread::sleep_for(boost::chrono::milliseconds(1));
 	}
 	
-	std::cout << "\nMain event loop terminated." << std::endl;	
-	t1.join();
-	std::cout << "\nProgram terminated." << std::endl;
+	return 0;
 }

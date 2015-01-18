@@ -4,6 +4,9 @@
 #include <cv.h>
 #include <highgui.h>
 
+#include <fstream>
+#include <sstream>
+
 namespace ozo {
 
 // weight and weight center of RGB lines.
@@ -14,7 +17,9 @@ typedef struct lines_
 
 class EvaluateLine {
 public:
-	cv::Mat data; //the external input interface
+	//the external input interface
+	cv::Mat *data;
+
 	EvaluateLine();
 	~EvaluateLine();
 	void process();

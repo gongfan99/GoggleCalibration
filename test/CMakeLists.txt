@@ -22,11 +22,9 @@ include_directories( ${CMAKE_INCLUDE_PATH} )
 
 # create libraries
 SET(C_FILES
-	SourceCamera.cpp
-	DecoderQR.cpp
-	OculusDK2.cpp
 	Server_pp.cpp
-	utils.cpp
+	SourceCamera.cpp
+	EvaluateLine.cpp
 )
 FOREACH(C_FILE ${C_FILES})
 	SET(C_FILES2 ${C_FILES2} ${PROJ_SRC}/${C_FILE})
@@ -55,19 +53,15 @@ FOREACH(LIB ${LibFiles})
 ENDFOREACH(LIB)
 
 # add packages
-find_package( OpenCV REQUIRED )
+find_package( OpenCV REQUIRED ) #please make sure the folder is correct in cmake even if it says OpenCV found!!!
 if (OpenCV_FOUND)
   include_directories( ${OpenCV_INCLUDE_DIRS} )
   set(LIBS ${LIBS} ${OpenCV_LIBS})
   message( "OpenCV found!" )
-  #message( ${OpenCV_INCLUDE_DIRS} )
+  #message( ${OpenCV_LIBS} )
 endif (OpenCV_FOUND)
 
 # add the executable
-add_executable(DecoderQR_test DecoderQR_test.cpp)
-add_executable(OculusDK2_test OculusDK2_test.cpp)
 add_executable(Server_pp_test Server_pp_test.cpp)
 
-target_link_libraries( DecoderQR_test ${LIBS} )
-target_link_libraries( OculusDK2_test ${LIBS} )
 target_link_libraries( Server_pp_test ${LIBS} )

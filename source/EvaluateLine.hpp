@@ -1,11 +1,11 @@
 #ifndef __OZO_EVALUATELINE_HPP__
 #define __OZO_EVALUATELINE_HPP__
 
-#include <cv.h>
-#include <highgui.h>
-
+#include <iostream>
 #include <fstream>
 #include <sstream>
+#include <cv.h>
+#include <highgui.h>
 
 namespace ozo {
 
@@ -19,6 +19,9 @@ class EvaluateLine {
 public:
 	//the external input interface
 	cv::Mat *data;
+	
+	//the external output interface
+	float deviationStraight, d_rg, d_bg;
 
 	EvaluateLine();
 	~EvaluateLine();

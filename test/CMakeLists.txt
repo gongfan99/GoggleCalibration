@@ -22,6 +22,7 @@ include_directories( ${CMAKE_INCLUDE_PATH} )
 
 # create libraries
 SET(C_FILES
+	ParaGenerator.cpp
 	Server_pp.cpp
 	SourceCamera.cpp
 	EvaluateLine.cpp

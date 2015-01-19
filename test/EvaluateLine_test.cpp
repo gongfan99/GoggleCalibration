@@ -13,7 +13,7 @@ int main()
 	EvaluateLine evaluateLine;
 
 	//create components
-	img = imread("sample.jpg")
+	img = imread("sample.png");
 
 	//connect components
 	evaluateLine.data = &img;

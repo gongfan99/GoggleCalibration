@@ -64,7 +64,6 @@ void Server_pp::on_fail(websocketpp::connection_hdl hdl) {
 void Server_pp::on_message(websocketpp::connection_hdl hdl, 
 							websocketpp::server<websocketpp::config::asio>::message_ptr msg) {
     if( (msg->get_payload()) == "image ready"){
-		std::cout << "Image ready received.\n";
 		outputReady = true;
     }
 }

@@ -2,8 +2,8 @@
 #include <fstream>
 #include <sstream>
 #include <conio.h>
-#include <boost/thread.hpp>
-#include <boost/thread/mutex.hpp>
+/* #include <boost/thread.hpp>
+#include <boost/thread/mutex.hpp> */
 #include <boost/chrono.hpp>
 #include "ParaGenerator.hpp"
 #include "SourceCamera.hpp"
@@ -11,6 +11,13 @@
 #include "EvaluateLine.hpp"
 #include "OzoConfigure.hpp"
 
+template < typename T >
+std::string to_string( const T& n )	{
+	std::ostringstream stm ;
+	stm << n ;
+	return stm.str() ;
+}
+	
 int main()
 {
 	using namespace ozo;
@@ -21,7 +28,9 @@ int main()
 	int i, caseNum = 0;
 	ostringstream tempString;
 
-	tempString << "dK[0]" << " " << "dK[1]" << " " << "dK[2]" << " " << "dK[3]" << " " << "chr[0]" << " " << "chr[1]" << " " << "chr[2]" << " " << "chr[3]" << "deviationStraight" << " " << "d_rg" << " " << "d_bg" << "\n";
+	tempString << "dK[0]" << " " << "dK[1]" << " " << "dK[2]" << " " << "dK[3]" << " " << "chr[0]" << " " << "chr[1]" << " " << "chr[2]" << " " << "chr[3]" << " " << "deviationStraight" << " " << "d_rg" << " " << "d_bg" << "\n";
+
+	cv::namedWindow("Camera_Output", CV_WINDOW_AUTOSIZE);
 
 	//create components
 	ParaGenerator paraGenerator;
@@ -38,7 +47,7 @@ int main()
 	//main loop
 	while(1){
 		server.process();
-		boost::this_thread::sleep_for(boost::chrono::milliseconds(20)); //wait for the image to be stable before captured by camera
+		boost::this_thread::sleep_for(boost::chrono::milliseconds(50)); //wait for the image to be stable before captured by camera
 		if (server.outputReady) {
 			camera.process();
 			evaluateLine.process();
@@ -46,13 +55,18 @@ int main()
 			/*******************************************************
 			* save the result to file
 			*********************************************************/
+			cv::imshow("Camera_Output", camera.data);
+			cv::waitKey(30);
+			//cv::imwrite(to_string<int>(caseNum)+".png", camera.data);
+			//boost::this_thread::sleep_for(boost::chrono::milliseconds(3000));
 			for (i=0; i<4; i++) tempString << paraGenerator.distortionK[i] << " ";
 			for (i=0; i<4; i++) tempString << paraGenerator.chromaAbParameter[i] << " ";
 			tempString << evaluateLine.deviationStraight << " " << evaluateLine.d_rg << " " << evaluateLine.d_bg << "\n";
-			
+			/********************************************************/
+			cout << "caswNum: " << caseNum << endl;
 			startServer = true;
 			caseNum++;
-			if (caseNum == 1) {
+			if (caseNum == 245) {
 				break;
 			} else {
 				paraGenerator.process(); //generate new distortionK and chromaAbParameter

@@ -21,29 +21,37 @@ ParaGenerator::ParaGenerator() {
 ParaGenerator::~ParaGenerator() {}
 
 void ParaGenerator::process() {
-	if (distortionK[3] < 0.1) {
+
+	if (distortionK[3] < 0.03) {
 		distortionK[3] += 0.01;
-	} else if (distortionK[2] < 0.5) {
+	} else if (distortionK[2] < 0.4) {
 		distortionK[3] = 0.0;
 		distortionK[2] += 0.1;
-	} else if (distortionK[1] < 0.5) {
+	} else if (distortionK[1] < 0.4) {
 		distortionK[3] = 0.0;
 		distortionK[2] = 0.0;
 		distortionK[1] += 0.1;
-	} else {
+	} else if (chromaAbParameter[1] > -0.005) {
 		distortionK[3] = 0.0;
 		distortionK[2] = 0.0;
 		distortionK[1] = 0.0;
+		chromaAbParameter[1] -= 0.001;
+	} else if (chromaAbParameter[3] < 0.005) {
+		distortionK[3] = 0.0;
+		distortionK[2] = 0.0;
+		distortionK[1] = 0.0;
+		chromaAbParameter[1] = 0.0;
+		chromaAbParameter[3] += 0.001;
 	}
 
-/* 	if (chromaAbParameter[1] > 0.02) {
+/* 	if (chromaAbParameter[1] > -0.02) {
 		chromaAbParameter[1] -= 0.001;
 	} else {
 		chromaAbParameter[1] = 0.0;
-	}
+	} */
 
-	if (chromaAbParameter[3] > 0.02) {
-		chromaAbParameter[3] -= 0.001;
+/* 	if (chromaAbParameter[3] > 0.02) {
+		chromaAbParameter[3] += 0.001;
 	} else {
 		chromaAbParameter[3] = 0.0;
 	} */

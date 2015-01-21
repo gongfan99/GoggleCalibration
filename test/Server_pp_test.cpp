@@ -66,7 +66,7 @@ int main()
 			cout << "caswNum: " << caseNum << endl;
 			startServer = true;
 			caseNum++;
-			if (caseNum == 245) {
+			if (caseNum == 50) {
 				break;
 			} else {
 				paraGenerator.process(); //generate new distortionK and chromaAbParameter
